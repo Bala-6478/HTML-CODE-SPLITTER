@@ -1,0 +1,75 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+
+        :root {
+            --bg-main: #0f172a;
+            --bg-card: #1e293b;
+            --accent: #38bdf8;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            min-height: 100vh;
+        }
+
+        .code-font {
+            font-family: 'Fira Code', monospace;
+        }
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        .tab-active {
+            border-bottom: 2px solid var(--accent);
+            color: var(--accent);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #38bdf8 0%, #3b82f6 100%);
+            transition: all 0.2s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
+        }
+
+        .editor-container {
+            height: calc(100vh - 300px);
+            min-height: 400px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            background: #10b981;
+            color: white;
+            border-radius: 0.5rem;
+            transform: translateY(150%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 50;
+        }
+        .toast.show {
+            transform: translateY(0);
+        }
