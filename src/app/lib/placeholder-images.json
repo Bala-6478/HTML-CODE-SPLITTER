@@ -1,0 +1,11 @@
+
+{
+  "placeholderImages": [
+    {
+      "id": "hero-illustration",
+      "description": "Abstract code blocks and file icons",
+      "imageUrl": "https://picsum.photos/seed/code123/1200/600",
+      "imageHint": "coding development"
+    }
+  ]
+}
