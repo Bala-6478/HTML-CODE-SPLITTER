@@ -6,6 +6,7 @@ HTML Code Splitter is a simple browser-based tool that separates a single HTML f
 * npm run dev
 
 ## NPM FILE DEMO LINK :-
+https://html-code-splitter-1.onrender.com/
 
 ## Fast Loading Demo Link :-
 http://balavignesh2025.neocities.org/Text%20To%20All%20Files/in
