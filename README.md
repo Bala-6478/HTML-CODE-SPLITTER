@@ -9,4 +9,4 @@ HTML Code Splitter is a simple browser-based tool that separates a single HTML f
 https://html-code-splitter-1.onrender.com/
 
 ## Fast Loading Demo Link :-
-http://balavignesh2025.neocities.org/Text%20To%20All%20Files/in
+https://balavignesh2025.neocities.org/HTML%20CODE%20SPLITTER/In
