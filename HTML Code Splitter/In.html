@@ -69,6 +69,13 @@
             transform: translateY(-2px);
         }
 
+        .drag-over {
+            border-color: #38bdf8 !important;
+            background-color: rgba(56, 189, 248, 0.05) !important;
+            box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.25) !important;
+            transform: scale(1.01);
+        }
+
         .custom-scrollbar::-webkit-scrollbar {
             width: 8px;
         }
@@ -182,11 +189,18 @@
                     </label>
                     <div id="input-stats" class="text-[10px] font-mono bg-slate-200 dark:bg-slate-800 px-2 py-0.5 rounded text-slate-500">0 characters</div>
                 </div>
-                <div class="h-[500px] lg:h-[600px] editor-focus-effect rounded-2xl overflow-hidden bg-white dark:bg-slate-900 shadow-xl relative">
+                <!-- Drag and Drop Zone -->
+                <div id="drop-zone" class="h-[500px] lg:h-[600px] editor-focus-effect rounded-2xl overflow-hidden bg-white dark:bg-slate-900 shadow-xl relative group transition-all duration-300">
+                    <div class="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 flex items-center justify-center bg-sky-500/5 transition-opacity">
+                        <div class="text-sky-500 flex flex-col items-center gap-2">
+                            <i class="fas fa-cloud-arrow-up text-3xl animate-bounce"></i>
+                            <span class="text-xs font-bold uppercase tracking-widest">Drop file to load</span>
+                        </div>
+                    </div>
                     <textarea 
                         id="input-code" 
-                        class="w-full h-full bg-transparent p-6 code-font text-sm text-slate-800 dark:text-sky-100 outline-none resize-none custom-scrollbar"
-                        placeholder="Paste your code here...&#10;&#10;<html>&#10;  <style>...</style>&#10;  <script>...</script>&#10;</html>"
+                        class="w-full h-full bg-transparent p-6 code-font text-sm text-slate-800 dark:text-sky-100 outline-none resize-none custom-scrollbar z-10 relative"
+                        placeholder="Paste your code here or drag & drop an HTML file...&#10;&#10;<html>&#10;  <style>...</style>&#10;  <script>...</script>&#10;</html>"
                         oninput="updateInputStats()"
                     ></textarea>
                 </div>
@@ -268,6 +282,42 @@
     <script>
         let currentTab = 'html';
         let splitData = { html: '', css: '', js: '' };
+
+        // Initialize Drag and Drop
+        const dropZone = document.getElementById('drop-zone');
+        const inputArea = document.getElementById('input-code');
+
+        ['dragover', 'dragenter'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropZone.classList.add('drag-over');
+            });
+        });
+
+        ['dragleave', 'dragend', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => {
+                dropZone.classList.remove('drag-over');
+            });
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.type === "text/html" || file.name.endsWith('.html')) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        inputArea.value = event.target.result;
+                        updateInputStats();
+                        showToast(`File "${file.name}" loaded!`);
+                    };
+                    reader.readAsText(file);
+                } else {
+                    showToast("Please drop a valid HTML file!");
+                }
+            }
+        });
 
         function toggleTheme() {
             const isDark = document.documentElement.classList.toggle('dark');
