@@ -51,13 +51,13 @@
             color: var(--text-main);
             min-height: 100vh;
             transition: background-color 0.3s ease, color 0.3s ease;
+            overflow-x: hidden;
         }
 
         .code-font {
             font-family: 'Fira Code', monospace;
         }
 
-        /* Text Bar Effect: Glowing Focus */
         .editor-focus-effect {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border: 1px solid rgba(148, 163, 184, 0.2);
@@ -67,12 +67,6 @@
             border-color: var(--accent);
             box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.15), 0 10px 15px -3px rgba(0, 0, 0, 0.1);
             transform: translateY(-2px);
-        }
-
-        .glass-panel {
-            background: rgba(var(--bg-card), 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .custom-scrollbar::-webkit-scrollbar {
@@ -105,10 +99,6 @@
             transform: translateY(0);
         }
 
-        .output-pane {
-            transition: opacity 0.2s ease;
-        }
-
         .toast {
             position: fixed;
             bottom: 2rem;
@@ -119,14 +109,24 @@
             border-radius: 0.75rem;
             transform: translateY(150%);
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 100;
+            z-index: 1000;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
         .toast.show {
             transform: translateY(0);
         }
 
-        /* Floating Animation for icons */
+        #preview-modal {
+            transition: all 0.3s ease-in-out;
+            opacity: 0;
+            pointer-events: none;
+            backdrop-filter: blur(8px);
+        }
+        #preview-modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
         @keyframes float {
             0% { transform: translateY(0px); }
             50% { transform: translateY(-5px); }
@@ -154,14 +154,19 @@
             </div>
             
             <div class="flex items-center gap-3 bg-slate-200/50 dark:bg-slate-800/50 p-1.5 rounded-xl border border-slate-300 dark:border-slate-700">
-                <!-- Theme Toggle -->
                 <button onclick="toggleTheme()" class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors text-slate-600 dark:text-slate-300" title="Toggle Theme">
                     <i id="theme-icon" class="fas fa-moon text-lg"></i>
                 </button>
                 <div class="w-[1px] h-6 bg-slate-300 dark:bg-slate-700 mx-1"></div>
-                <button onclick="handleSplit()" class="btn-action bg-sky-500 hover:bg-sky-400 text-white px-5 py-2 rounded-lg font-semibold flex items-center gap-2 shadow-lg shadow-sky-500/20">
-                    <i class="fas fa-wand-magic-sparkles"></i> <span>Split Now</span>
+                
+                <button onclick="openPreview()" class="btn-action bg-emerald-500 hover:bg-emerald-400 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 shadow-lg shadow-emerald-500/20">
+                    <i class="fas fa-play"></i> <span>Run</span>
                 </button>
+
+                <button onclick="handleSplit()" class="btn-action bg-sky-500 hover:bg-sky-400 text-white px-5 py-2 rounded-lg font-semibold flex items-center gap-2 shadow-lg shadow-sky-500/20">
+                    <i class="fas fa-wand-magic-sparkles"></i> <span>Split</span>
+                </button>
+                
                 <button onclick="resetAll()" class="btn-action bg-slate-500/10 hover:bg-slate-500/20 text-slate-600 dark:text-slate-300 px-4 py-2 rounded-lg font-medium">
                     <i class="fas fa-rotate-right mr-2"></i>Reset
                 </button>
@@ -177,7 +182,7 @@
                     </label>
                     <div id="input-stats" class="text-[10px] font-mono bg-slate-200 dark:bg-slate-800 px-2 py-0.5 rounded text-slate-500">0 characters</div>
                 </div>
-                <div class="h-[500px] lg:h-[600px] editor-focus-effect rounded-2xl overflow-hidden bg-white dark:bg-slate-900 shadow-xl">
+                <div class="h-[500px] lg:h-[600px] editor-focus-effect rounded-2xl overflow-hidden bg-white dark:bg-slate-900 shadow-xl relative">
                     <textarea 
                         id="input-code" 
                         class="w-full h-full bg-transparent p-6 code-font text-sm text-slate-800 dark:text-sky-100 outline-none resize-none custom-scrollbar"
@@ -212,13 +217,8 @@
                 </div>
 
                 <div class="h-[500px] lg:h-[600px] relative rounded-2xl overflow-hidden bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-inner">
-                    <!-- HTML Output -->
                     <pre id="output-html" class="output-pane absolute inset-0 w-full h-full p-6 code-font text-sm text-indigo-600 dark:text-green-300 overflow-auto custom-scrollbar"></pre>
-                    
-                    <!-- CSS Output -->
                     <pre id="output-css" class="output-pane hidden absolute inset-0 w-full h-full p-6 code-font text-sm text-pink-600 dark:text-pink-300 overflow-auto custom-scrollbar"></pre>
-                    
-                    <!-- JS Output -->
                     <pre id="output-js" class="output-pane hidden absolute inset-0 w-full h-full p-6 code-font text-sm text-amber-600 dark:text-yellow-200 overflow-auto custom-scrollbar"></pre>
 
                     <!-- Empty State -->
@@ -232,31 +232,29 @@
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Footer Help -->
-        <footer class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="p-6 rounded-2xl bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 flex gap-4">
-                <div class="text-sky-500 text-xl"><i class="fas fa-bolt"></i></div>
-                <div>
-                    <h3 class="font-bold text-sm mb-1">Instant Extraction</h3>
-                    <p class="text-xs text-slate-500">Pulls internal styles and scripts into virtual files.</p>
+    <!-- PREVIEW MODAL -->
+    <div id="preview-modal" class="fixed inset-0 z-[2000] flex items-center justify-center p-4 md:p-10 bg-black/60">
+        <div class="bg-white dark:bg-slate-900 w-full h-full max-w-6xl rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-slate-200 dark:border-slate-800">
+            <div class="flex items-center justify-between p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-eye text-emerald-500"></i>
+                    <h2 class="font-bold text-slate-700 dark:text-slate-200">Live Code Preview</h2>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="openPreview()" class="w-10 h-10 flex items-center justify-center rounded-xl bg-sky-100 dark:bg-sky-500/10 text-sky-500 hover:bg-sky-500 hover:text-white transition-all" title="Refresh Preview">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                    <button onclick="closePreview()" class="w-10 h-10 flex items-center justify-center rounded-xl bg-red-100 dark:bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
             </div>
-            <div class="p-6 rounded-2xl bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 flex gap-4">
-                <div class="text-purple-500 text-xl"><i class="fas fa-link"></i></div>
-                <div>
-                    <h3 class="font-bold text-sm mb-1">Smart Linking</h3>
-                    <p class="text-xs text-slate-500">Injects standard link/script tags into your new HTML.</p>
-                </div>
+            <div class="flex-1 relative bg-white">
+                <iframe id="live-frame" class="w-full h-full border-none"></iframe>
             </div>
-            <div class="p-6 rounded-2xl bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 flex gap-4">
-                <div class="text-emerald-500 text-xl"><i class="fas fa-cloud-arrow-down"></i></div>
-                <div>
-                    <h3 class="font-bold text-sm mb-1">Ready to Deploy</h3>
-                    <p class="text-xs text-slate-500">Download individual files ready for hosting.</p>
-                </div>
-            </div>
-        </footer>
+        </div>
     </div>
 
     <!-- Notification Toast -->
@@ -270,12 +268,6 @@
     <script>
         let currentTab = 'html';
         let splitData = { html: '', css: '', js: '' };
-
-        // Initialize Theme
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
-            // Uncomment below if you want to respect system light mode by default
-            // document.documentElement.classList.remove('dark');
-        }
 
         function toggleTheme() {
             const isDark = document.documentElement.classList.toggle('dark');
@@ -313,6 +305,29 @@
             });
         }
 
+        function openPreview() {
+            const raw = document.getElementById('input-code').value;
+            if (!raw.trim()) {
+                showToast("Nothing to run!");
+                return;
+            }
+
+            const modal = document.getElementById('preview-modal');
+            const frame = document.getElementById('live-frame');
+            modal.classList.add('active');
+            
+            const frameDoc = frame.contentWindow.document;
+            frameDoc.open();
+            frameDoc.write(raw);
+            frameDoc.close();
+            
+            showToast("Running code...");
+        }
+
+        function closePreview() {
+            document.getElementById('preview-modal').classList.remove('active');
+        }
+
         function handleSplit() {
             const raw = document.getElementById('input-code').value;
             if (!raw.trim()) {
@@ -326,14 +341,12 @@
                 let extractedCSS = "";
                 let extractedJS = "";
 
-                // Styles
                 const styles = doc.querySelectorAll('style');
                 styles.forEach(s => {
                     extractedCSS += s.innerHTML + "\n\n";
                     s.remove();
                 });
 
-                // Scripts
                 const scripts = doc.querySelectorAll('script');
                 scripts.forEach(s => {
                     if (!s.src) {
@@ -342,7 +355,6 @@
                     }
                 });
 
-                // Linking
                 if (extractedCSS.trim()) {
                     const link = doc.createElement('link');
                     link.rel = 'stylesheet';
@@ -413,6 +425,10 @@
             a.click();
             URL.revokeObjectURL(url);
         }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closePreview();
+        });
     </script>
 </body>
 </html>
