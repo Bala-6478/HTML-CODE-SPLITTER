@@ -5,7 +5,7 @@ HTML Code Splitter is a simple browser-based tool that separates a single HTML f
 * npm install  
 * npm run dev      
 
-## NPM FILE DEMO LINK :-
+## NPM FILE DEMO LINK :-  
 https://html-code-splitter-1.onrender.com/
 
 ## Fast Loading Demo Link :-
