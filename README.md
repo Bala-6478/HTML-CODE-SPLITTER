@@ -1,6 +1,6 @@
 # HTML-CODE-SPLITTER  
 HTML Code Splitter is a simple browser-based tool that separates a single HTML file into organized HTML, CSS, and JavaScript files by extracting code from <style> and <script> tags.
-
+ 
 ## CODE Runing Command :    
 * npm install     
 * npm run dev      
