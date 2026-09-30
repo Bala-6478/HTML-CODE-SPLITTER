@@ -8,7 +8,7 @@ HTML Code Splitter is a simple browser-based tool that separates a single HTML f
 ## NPM FILE DEMO LINK :-    
 https://html-code-splitter-1.onrender.com/  
   
-## Fast Loading Demo Link :-
+## Fast Loading Demo Link :-  
 https://balavignesh2025.neocities.org/HTML%20CODE%20SPLITTER/html
  
 ## Soucre code Viewer :
